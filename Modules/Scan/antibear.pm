@@ -46,10 +46,8 @@ sub scan_user {
 
         my($ident, $host, $serv, $nick, $fullname, $print_always) = @_;
 
-        if ($host !~ /underhanded/)
-        {
-                main::message_to($nick, "\001TIME\001");
-        }
+        main::message_to($nick, "\001TIME\001");
+
         $connects++;
 }
 
