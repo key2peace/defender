@@ -24,8 +24,10 @@ use strict;
 use warnings;
 use IO::Socket;
 
-$VERSION = "1.5.2+connecttek";
-$DATE = "Aug 2010";
+use constant {
+    VERSION => "1.5.2+connecttek",
+    DATE => "Aug 2010"
+};
 
 require "./message.pl";
 require "./Modules/Main.pm";
