@@ -37,7 +37,7 @@ sub handle_notice
 sub handle_mode
 {
     my ($nick,$target,$params) = @_;
-#h|o|s|H|I|Q|W
+
     if ($target !~ /^(\#|\&|\!)/)   # don't bounce any channel modes
     {
         if ($params =~ /^\+${main::opermodes}/) # Attemt at shoving this in the protocol module
