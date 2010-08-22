@@ -58,14 +58,6 @@ sub handle_mode
             }
             else
             {
-                $params =~ s/\+/-/;
-                #$params =~ s/x|w|i|s|z|B|S|G//; # remove safe modes
-
-                #main::rawirc(":$main::sid SVSMODE $target $params"); # bounce modes
-                #main::mode($target, $params);
-                #main::notice($target, "$target $params");
-                #main::rawirc(":$main::botnick SVSO $target -"); # for unreal based ircds only
-                #$params =~ s/-//;
                 main::notice($target,"You are not permitted these usermodes. Defender has killed you due to using the modes: \002$params\002. If you are an oper, please change to your \002main registered nickname\002 before opering.");
                 main::killuser($target,"You are not permitted these usermodes. If you believe this is in error please email ".$main::killmail);
                 main::globops("Warning! \002$target\002 was given modes \002+$params\002, and is not in the access list!");
