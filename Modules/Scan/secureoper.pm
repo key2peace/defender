@@ -40,7 +40,7 @@ sub handle_mode
 
     if ($target !~ /^(\#|\&|\!)/)   # don't bounce any channel modes
     {
-        if ($params =~ /^\+${main::opermodes}/) # Attemt at shoving this in the protocol module
+        if ($params =~ /^\+${main::opermodes}/) # Attempt at shoving this in the protocol module
         {
             my $allow = 0;
             foreach my $nickmask (@masks)
@@ -58,8 +58,7 @@ sub handle_mode
             }
             else
             {
-                main::notice($target,"You are not permitted these usermodes. Defender has killed you due to using the modes: \002$params\002. If you are an oper, please change to your \002main registered nickname\002 before opering.");
-                main::killuser($target,"You are not permitted these usermodes. If you believe this is in error please email ".$main::killmail);
+                main::killuser($target,"You are not an operator, please do not attempt, and succeed, in opering. If you believe this is in error please email ".$main::killmail);
                 main::globops("Warning! \002$target\002 was given modes \002+$params\002, and is not in the access list!");
                 return;
             }
