@@ -5,8 +5,10 @@
 
 #
 # This is version 0.1 of the module.  It currently only checks TIME.
-# Planned additions include the other methods used in InspIRCd's
-# m_antibear.
+# <strike>Planned additions include the other methods used in InspIRCd's
+# m_antibear.</strike>
+#
+# Planned additions include telling InspIRCd's m_antibear methods to burn in a flaming pit of death. :)
 #
 
 package Modules::Scan::antibear;
