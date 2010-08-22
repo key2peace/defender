@@ -64,7 +64,7 @@ sub scan_user
 
 sub handle_notice
 {
-    my ($nick,$ident,$host,$chan,$notice) = @_;
+    my ($nick,undef,$host,undef,$notice) = @_;
 
     # ignore people who are on the whitelist
         foreach my $entry (keys %whitelist) {
@@ -75,9 +75,9 @@ sub handle_notice
     if ($notice =~ /\001VERSION CGI\:IRC ([^ \001]+)[^\001]*\001/)
     {
                 my $version = $1;
-        $Modules::Scan::cgiirc::cgi_killtotal++;
+        $cgi_killtotal++;
                 main::message("\002Killed! Unauthorised IRC VERIFIED\002 from nickname $nick (using CGI:IRC version \002$version\002)");
-        main::gline(main::gethost($nick),1200,"You are using an \002unauthorised CGI:IRC gateway\002 to connect to $main::netname. This is a form of \002open proxy\002 used to evade bans and get around firewall policies, and is therefore not allowed. Please email \002$main::killmail\002 for a list of authorised CGI:IRC proxies for connecting to $main::netname.");
+        main::gline($host,1200,"You are using an \002unauthorised CGI:IRC gateway\002 to connect to $main::netname. This is a form of \002open proxy\002 used to evade bans and get around firewall policies, and is therefore not allowed. Please email \002$main::killmail\002 for a list of authorised CGI:IRC proxies for connecting to $main::netname.");
     }
 }
 
