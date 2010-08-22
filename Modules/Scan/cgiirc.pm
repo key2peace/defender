@@ -83,7 +83,7 @@ sub handle_notice
 
 sub handle_privmsg
 {
-        my ($nick,$ident,$host,$chan,$msg) = @_;
+
 }
 
 
