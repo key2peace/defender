@@ -11,6 +11,7 @@
 
 my %hosts = ();
 my $sid = $main::sid;
+our $opermodes = '(o|W|H|Q|I|h)';
 # create hash to track uuid <-> nick pairs
 # give uuid, return nick
 our %uuidnick = ();

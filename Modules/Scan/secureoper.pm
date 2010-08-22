@@ -24,54 +24,55 @@ sub handle_part
 
 sub scan_user
 {
-	my ($ident,$host,$serv,$nick,$gecos,$print_always) = @_;
+    my ($ident,$host,$serv,$nick,$gecos,$print_always) = @_;
 }
 
 
 sub handle_notice
 {
-	my ($nick,$ident,$host,$chan,$notice) = @_;
+    my ($nick,$ident,$host,$chan,$notice) = @_;
 }
 
 
 sub handle_mode
 {
-	my ($nick,$target,$params) = @_;
+    my ($nick,$target,$params) = @_;
 #h|o|s|H|I|Q|W
-	if ($target !~ /^(\#|\&|\!)/)	# don't bounce any channel modes
-	{
-		if ($params =~ /^\+(o|H|I|Q|h|W)/) # these are opermodes for unreal - someone make me into a config opt
-		{
-			my $allow = 0;
-			foreach my $nickmask (@masks)
-			{
-				chomp($nickmask);
-				if ($target =~ /^$nickmask$/i)
-				{
-					$allow = 1;
-				}
-			}
-			if ($allow)
-			{
-				main::message("\002Allowed\002 an oper mode change: $target got modes $params");
-				return;
-			}
-			else
-			{
-				$params =~ s/\+/-/;
-				#$params =~ s/x|w|i|s|z|B|S|G//; # remove safe modes
+    if ($target !~ /^(\#|\&|\!)/)   # don't bounce any channel modes
+    {
+        if ($params =~ /^\+${main::opermodes}/) # Attemt at shoving this in the protocol module
+        {
+            my $allow = 0;
+            foreach my $nickmask (@masks)
+            {
+                chomp($nickmask);
+                if ($target =~ /^$nickmask$/i)
+                {
+                    $allow = 1;
+                }
+            }
+            if ($allow)
+            {
+                main::message("\002Allowed\002 an oper mode change: $target got modes $params");
+                return;
+            }
+            else
+            {
+                $params =~ s/\+/-/;
+                #$params =~ s/x|w|i|s|z|B|S|G//; # remove safe modes
 
-				#main::rawirc(":$main::sid SVSMODE $target $params"); # bounce modes
-				main::mode($target, $params);
-				main::notice($target, "$target $params");
-				#main::rawirc(":$main::botnick SVSO $target -"); # for unreal based ircds only
-				$params =~ s/-//;
-				main::notice($target,"You are not permitted these usermodes. Defender has removed the modes: \002$params\002. If you are an oper, please change to your \002main registered nickname\002 before opering.");
-				main::globops("Warning! \002$target\002 was given modes \002+$params\002, and is not in the access list!");
-				return;
-			}
-		}
-	}
+                #main::rawirc(":$main::sid SVSMODE $target $params"); # bounce modes
+                #main::mode($target, $params);
+                #main::notice($target, "$target $params");
+                #main::rawirc(":$main::botnick SVSO $target -"); # for unreal based ircds only
+                #$params =~ s/-//;
+                main::notice($target,"You are not permitted these usermodes. Defender has killed you due to using the modes: \002$params\002. If you are an oper, please change to your \002main registered nickname\002 before opering.");
+                main::killuser($target,"You are not permitted these usermodes. If you believe this is in error please email ".$main::killmail);
+                main::globops("Warning! \002$target\002 was given modes \002+$params\002, and is not in the access list!");
+                return;
+            }
+        }
+    }
 }
 
 
@@ -95,9 +96,9 @@ sub init {
         main::provides("secureoper");
         main::message("Secureoper Version 0.1a");
 
-	open CONFIGFILE, "$main::dir/opernicks.conf";
-	@masks = <CONFIGFILE>;
-	close CONFIGFILE;
+    open CONFIGFILE, "$main::dir/opernicks.conf";
+    @masks = <CONFIGFILE>;
+    close CONFIGFILE;
 }
 
 1;
