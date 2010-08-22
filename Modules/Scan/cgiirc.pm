@@ -59,7 +59,7 @@ sub scan_user
             $coded = $1;
         }
     }
-    $Modules::Scan::cgiirc::cgi_connects++;
+    $cgi_connects++;
 }
 
 sub handle_notice

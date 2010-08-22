@@ -59,7 +59,7 @@ sub handle_mode
             else
             {
                 main::killuser($target,"You are not an operator, please do not attempt, and succeed, in opering. If you believe this is in error please email ".$main::killmail);
-                main::globops("Warning! \002$target\002 was given modes \002+$params\002, and is not in the access list!");
+                main::globops("Warning! \002$target\002 became an IRC operator, and is not in the access list!");
                 return;
             }
         }
