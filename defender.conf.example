@@ -1,0 +1,280 @@
+#!/usr/bin/perl defender.pl
+# -----------------------------------------------------------------------------#
+#                                                                              #
+#                         IRC Defender example config                          #
+#                         ---------------------------                          #
+#                                                                              #
+# Please read all of the config file before you run the program. Save your     #
+# live config file as 'defender.conf' in the same directory as the defender.pl #
+# script.                                                                      #
+#                                                                              #
+# You may use the construct %xx to insert any non-ascii character into the     #
+# config file, e.g. %3D inserts a literal "=" symbol.                          #
+# You must not have spaces between the variable name, the = symbol, and its    #
+# value.                                                                       #
+#                                                                              #
+# Warning! DO NOT EDIT THIS TEXT FILE IN A WINDOWS EDITOR! EDIT IT IN YOUR     #
+# SHELL OR IT WILL FAIL TO READ CORRECTLY AND YOU WILL GET ALL KINDS OF        #
+# STRANGE ERRORS! YOU HAVE BEEN WARNED!                                        #
+#                                                                              #
+#                                                                              #
+# -----------------------------------------------------------------------------#
+
+# ****************************************
+# Server settings
+# The following settings control linking
+# defender and the control channel.  If
+# you change any of these you MUST restart
+# defender for them to take effect!
+# ****************************************
+
+# -----
+# Server to connect to
+# -----
+
+server=localhost
+
+# -----
+# Port number of server
+# -----
+
+port=7025
+
+# -----
+# IP to bind socket to
+# -----
+
+bind=127.0.0.1
+
+# -----
+# Which protocol module to use, server is recommended, client supports
+# unrealircd
+# -----
+
+linktype=unreal
+
+# -----
+# Server link password, or client connect password if on a restricted I: line
+# -----
+
+password=linkage
+
+# -----
+# Server to connect as, you probably should U: line this if possible
+# -----
+
+servername=defender.connecttek.net
+
+# -----
+# Server numeric for unrealircd and p10. Read the README!
+# -----
+
+numeric=000
+
+# -----
+# Server SID for ts6 and InspIRCd 1.2/2.x
+# -----
+
+sid=0DE
+
+# -----
+# Server description
+# -----
+
+serverdesc=IRC Defender Server
+
+
+
+# **************************************
+# Client settings
+# The following settings control various
+# things with the defender pseudoclient.
+# **************************************
+
+# -----
+# Client's nickname
+# -----
+
+botnick=Defender
+
+# -----
+# Hostname used for pseudoclient
+# -----
+
+domain=connecttek.net
+
+# -----
+# Client's fullname (GECOS)
+# -----
+
+fullname=IRC Defender
+
+# -----
+# quit message on SIGKILL
+# -----
+
+quitmsg=Defender terminating
+
+# -----
+# secured channel to join
+# As there is no way to control who can/can't say things to defender in the
+# control channel, it is recommended you protect the channel with services
+# and set it oper-only
+# -----
+
+channel=#services
+
+
+
+# ***********************************
+# Global module settings
+# These settings relate to parameters
+# used by all modules, and also what
+# modules are loaded.
+# ***********************************
+
+# -----
+# scanning modules to load, separated by commas. See Modules/Scan directory
+# -----
+
+modules=fyle,cgiirc,regexp_akill,version,conn_average
+
+# -----
+# Data directory, defaults to current directory if not defined
+# -----
+
+datadir=/home/path/to/data/defender
+
+# -----
+# Logging module name (default is Text, for logging to file)
+# -----
+
+logto=Text
+logpath=/home/brain/defender/defender.log
+
+# -----
+# email given in /kill messages
+# -----
+
+mail=abuse@misconfigured.tld
+
+# -----
+# Network name, used in kills and messages
+# -----
+
+networkname=Misconfigured
+
+# -----
+# Paranoia level. Set this to the maximum allowed score. It is *STRONGLY*
+# recommended you leave this at the default value of 7.
+# this is used by the fyle module only presently, but other modules may
+# use it some day.
+# -----
+
+paranoia=7
+
+# -----
+# This should contain your support channel's name
+# -----
+
+supportchannel=#support
+
+# -----
+# url to refer to for how the system works, given in /kill messages
+# -----
+
+url=http://this.network.misconfigured.defender.so.you.are.pointed.to.spartairc.org/
+
+
+
+# **************************************
+# Module parameters
+# These settings control various modules
+# **************************************
+
+# -----
+# Auth module Type
+# Note: as of right now this has no effect.
+# -----
+
+authtype=basic
+
+# -----
+# Module: conn_average
+# how many connections per min counts as an alert
+# -----
+
+conn_average_max=3
+
+# -----
+# Module: flood
+# How many joins/parts trigger actions and the size of the checking interval
+# -----
+
+flood_log=1
+flood_globops=2
+flood_lock=3
+flood_interval=5
+
+# -----
+# Module: nickflood
+# How many nickchanges are a flood
+# -----
+
+nickflood_limit=3
+
+# -----
+# Module: verbose
+# Set this to 1 if the colors in the control channel are ugly.  This turns off
+# the colors.
+# -----
+
+ugly=0
+
+# ----
+# Module: version
+# Do you want to ban on one word version replies? This can have a lot of false
+# positives, so default no.
+# Change to 1 for yes
+# ----
+
+OneWord=0
+
+# ----
+# Module: version
+# This setting enables version reporting to the control channel without the
+# need to load the verbose module.
+# Disabled by default, change to 1 to enable.
+# ----
+
+version_verbose=0
+
+
+# ------------------------ Deprecated ---------------------------
+#
+# These values are used only by the client module,
+# and can therefore be considered deprecated. However
+# if you are behind the times enough to be using the
+# client module (or this is all that is available to
+# you) then you MUST define these values.
+#
+#       -----
+#       name to /oper as, used only by the client module
+#       -----
+#
+#       opername=myoper
+#
+#       -----
+#       password to use in /oper, used only by the client
+#       module
+#       -----
+#
+#       operpass=my_password_here
+#
+#       -----
+#       Nickserv password to identify to nickserv, used
+#       only by the client module
+#       -----
+#
+#       nickserv=my_nspass
+#

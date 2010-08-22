@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/repository/!svn/ver/867/trunk/defender/Modules/Log
+END
+Text.pm
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repository/!svn/ver/300/trunk/defender/Modules/Log/Text.pm
+END
+Mysql.pm
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repository/!svn/ver/300/trunk/defender/Modules/Log/Mysql.pm
+END

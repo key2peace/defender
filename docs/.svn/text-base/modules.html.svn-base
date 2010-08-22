@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>IRC Defender Module Documentation</title>
+<link rel="stylesheet" href="./pod.css" type="text/css" />
+<link rev="made" href="mailto:brain@brainbox.winbot.co.uk" />
+</head>
+
+<body>
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" valign="middle">
+<big><strong><span class="block">&nbsp;IRC Defender Module Documentation</span></strong></big>
+</td></tr>
+</table>
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#credits">CREDITS</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#event_subroutines">Event Subroutines</a></li>
+	<ul>
+
+		<li><a href="#sub_stats">sub stats</a></li>
+		<li><a href="#sub_scan_user">sub scan_user</a></li>
+		<li><a href="#sub_handle_notice">sub handle_notice</a></li>
+		<li><a href="#sub_handle_privmsg">sub handle_privmsg</a></li>
+		<li><a href="#sub_init">sub init</a></li>
+	</ul>
+
+	<li><a href="#core_functions">Core Functions</a></li>
+	<ul>
+
+		<li><a href="#main::message">main::message</a></li>
+		<li><a href="#main::message_to">main::message_to</a></li>
+		<li><a href="#main::killuser">main::killuser</a></li>
+	</ul>
+
+	<li><a href="#core_variables">Core Variables</a></li>
+	<ul>
+
+		<li><a href="#$main::dir">$main::dir</a></li>
+		<li><a href="#$main::domain">$main::domain</a></li>
+		<li><a href="#$main::nspass">$main::nspass</a></li>
+		<li><a href="#$main::killurl">$main::killurl</a></li>
+		<li><a href="#$main::killmail">$main::killmail</a></li>
+		<li><a href="#$main::botnick">$main::botnick</a></li>
+		<li><a href="#$main::mychan">$main::mychan</a></li>
+		<li><a href="#$main::botname">$main::botname</a></li>
+		<li><a href="#$main::netname">$main::netname</a></li>
+		<li><a href="#@main::modlist">@main::modlist</a></li>
+	</ul>
+
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#copyright">COPYRIGHT</a></li>
+	<li><a href="#version">VERSION</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>IRC Defender dummy module for developers</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>An example module that doesn't do much but demonstrates functions, API calls, event names etc.
+<strong>WARNING!</strong> Do NOT load this plugin into your setup without reading it through and modifying it,
+it will /kill all users that connect!</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="credits">CREDITS</a></h1>
+<p>Thanks to the users on irc.chatspike.net for their ongoing patience while this service was tested,
+suffering multiple kills, shuns, force joins and being bitched at by machines ;-)</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>All scanning modules for IRC Defender must be under the Modules::Scan namespace and be placed
+into the Modules/Scan directory. Your modules can be loaded from the config by putting their name
+into the list, e.g. if your module is ``foomatic.pm'' then you should put ``foomatic'' into the comma
+seperated list in the config file. Modules are event driven, events being triggered by the core or
+the protocol module.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="event_subroutines">Event Subroutines</a></h1>
+<p>The following subroutines must be defined by your module.</p>
+<p>
+</p>
+<h2><a name="sub_stats">sub stats</a></h2>
+<p>The stats sub is called whenever your module is to display statistics to the log channel.
+You should use main::message to output stats, and should own up to any kills your module
+has made here, seperately to any counted by the core and protocol module.</p>
+<p>
+</p>
+<h2><a name="sub_scan_user">sub scan_user</a></h2>
+<p>This subroutine will be called whenever a user connects, with all information about the user.
+it is up to the protocol module how this information is gathered but the parameter order
+is always the same.</p>
+<p>
+</p>
+<h2><a name="sub_handle_notice">sub handle_notice</a></h2>
+<p>This subroutine will be called whenever a notice is received. Note that some protocol modules
+may not fill the $ident and $host fields because the information is simply not sent to the
+server.</p>
+<p>
+</p>
+<h2><a name="sub_handle_privmsg">sub handle_privmsg</a></h2>
+<p>This function works similarly to handle_notice above, except that it receives privmsg commands.
+Yet again, some protocol modules may omit the values for $ident and $host if they are
+not passed to them and no caching is in use.</p>
+<p>
+</p>
+<h2><a name="sub_init">sub init</a></h2>
+<p>This function is called before the connection to the irc server takes place, immediately
+after the module is loaded. You should load files and initialise your modules here.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="core_functions">Core Functions</a></h1>
+<p>These functions can be used from any module. They exist in the main:: namespace and are exported by
+both the core and the protocol module. You MUST use these functions to produce output and fetch
+information, as you cannot gaurantee the format of the output, which varies from protocol to protocol.</p>
+<p>
+</p>
+<h2><a name="main::message">main::message</a></h2>
+<p>This function takes one parameter, a string to be sent to the output channel. This may arrive in the
+channel through various means, depending on the protocol module, but always arrives and displays literally
+with no changes. You may include irc escapes such as \002 for bold.</p>
+<p>
+</p>
+<h2><a name="main::message_to">main::message_to</a></h2>
+<p>This function takes two parameters, a target channel or user and a string to be sent to the target channel.
+This may arrive in the channel through various means, depending on the protocol module, but always arrives
+and displays literally with no changes. You may include irc escapes such as \002 for bold.</p>
+<p>
+</p>
+<h2><a name="main::killuser">main::killuser</a></h2>
+<p>This function sends a KILL to remove a target user from the network. The actual format of the kill varies
+between protocols, but has the same effect of closing the users connection with the given kill message. This
+function also increments the global kill counter, used by 'status', so that you don't have to maintain it.
+This function takes two parameters, the nick of the user to remove, and the kill reason.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="core_variables">Core Variables</a></h1>
+<p>These variables are exported by the core. <strong>Warning!</strong> these variables are writeable, but be careful not to
+write to them from your module, accidentally or otherwise! This may be fixed in some future release.</p>
+<p>
+</p>
+<h2><a name="$main::dir">$main::dir</a></h2>
+<p>This variable contains the directory of the program, where you may store and retrieve data in files.</p>
+<p>
+</p>
+<h2><a name="$main::domain">$main::domain</a></h2>
+<p>This holds the domain name of the irc network, e.g. chatspike.net</p>
+<p>
+</p>
+<h2><a name="$main::nspass">$main::nspass</a></h2>
+<p>If defined, holds the program's nickserv password. Unused when the server module is loaded.</p>
+<p>
+</p>
+<h2><a name="$main::killurl">$main::killurl</a></h2>
+<p>A page to refer users to regarding why they have been killed. This is generic and depending on your
+network may contain related information.</p>
+<p>
+</p>
+<h2><a name="$main::killmail">$main::killmail</a></h2>
+<p>This variable contains an email address from the config file to which queries about kills should be
+addressed. This should usually be the akill or admin email for your network.</p>
+<p>
+</p>
+<h2><a name="$main::botnick">$main::botnick</a></h2>
+<p>This variable contains the nickname of the pseudoclient, or bot, that this program creates. In client
+mode, the program creates a connection directly as this user, meaning it is limited by the same
+restrictions as other users on your network. In server mode, the program connects as a server then
+masquerades this client as a connection of it, meaning there are no real restrictions on this fake client
+(commonly known as a pseudoclient)</p>
+<p>
+</p>
+<h2><a name="$main::mychan">$main::mychan</a></h2>
+<p>This is the channel that all output appears on. main::message automatically sends its data here.</p>
+<p>
+</p>
+<h2><a name="$main::botname">$main::botname</a></h2>
+<p>This contains the GECOS (fullname field) of the pseudoclient or bot on the network.</p>
+<p>
+</p>
+<h2><a name="$main::netname">$main::netname</a></h2>
+<p>This contains the displayed name of the network the program is connected to, e.g. 'ChatSpike'.</p>
+<p>
+</p>
+<h2><a name="@main::modlist">@main::modlist</a></h2>
+<p>This list is a list of all loaded modules currently in the system. Removing a module from this list
+will keep it loaded but all event calls to it will cease. You may use this list to, for example,
+check for dependencies.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>This document was composed by Craig Edwards (aka Brain). Stylesheet from the TrillPerl documentation.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="copyright">COPYRIGHT</a></h1>
+<p>This text and program code it was generated from are (C) Craig Edwards 2004. Permission to modify this text is granted
+so long as the copyright notice given is preserved. See the comments in the source code for more information.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="version">VERSION</a></h1>
+<p>Version 1.0, 20th February 2003</p>
+<p>The newest version of this file should always be available at &lt;<a href="http://brainbox.winbot.co.uk/~chatspike/modules.html">http://brainbox.winbot.co.uk/~chatspike/modules.html</a>&gt;</p>
+<p><a href="#__index__"><small>Back to Top</small></a></p>
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" valign="middle">
+<big><strong><span class="block">&nbsp;IRC Defender Module Documentation</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>

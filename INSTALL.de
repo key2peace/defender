@@ -1,0 +1,13 @@
+INSTALLATION ANLEITUNG
+-------------------------
+
+o  Entpacke(Untar) den Paketinhalt in dein Verzeichnis
+
+o  Kopiere die defender.conf.example.de als defender.conf
+   Verändere die gegebenen Werte und passe sie deiner 
+   IRC Netzwerkkonfiguration an
+   
+o  Starte das Programm mit "perl defender.pl".
+   Das Programm läuft im Hintergrund, die Ausgabe wird
+   in die gewählte Datei gesendet.(die Logmethode die in deiner
+   Configdatei definiert wurde zB logto=Text)

@@ -1,0 +1,4 @@
+/bin/sh
+pod2html --infile=/home/chatspike/defender/Modules/Scan/dummy.pm --outfile=/home/chatspike/defender/docs/modules.html --css="./pod.css" --backlink="Back to Top" --header --title="IRC Defender Module Documentation"
+
+

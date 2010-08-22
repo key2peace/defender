@@ -1,0 +1,55 @@
+form
+{
+	display:inline
+}
+
+TABLE, TR, TD, TEXT, BODY
+{
+	font-family: Verdana, Tahoma, Arial;
+	font-size: 10pt;
+	color: #c0c0c0;	
+	border-style: none;
+	border-width: 1px;
+	border-color: #c0c0c0;
+	background-color: #000040;
+}
+
+a:link, a:visited, a:active
+{
+	color: #80a0ff;
+}
+
+a:hover
+{
+	color: #80a0ff;
+}
+
+strong
+{
+	color: #ffff60;
+	font-size: 12pt;
+}
+
+blockquote
+{
+	color: #ffff60;
+}
+
+h1, h2, h3, h4
+{
+	color: #ffff60;
+}
+
+
+pre
+{
+	font-size: 80%;
+	color: #BBBBBB;
+	background-color: #000057;
+}
+
+ul
+{ 
+	list-style-type: none;
+}
+

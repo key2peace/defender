@@ -1,0 +1,145 @@
+I NEED TO BE CLEANED UP AND SPLIT INTO SEPERATE FILES!!!
+FIXME: (OMG a FIXME in documentation!) Someone remove the above line after the
+cleanup.
+
+***** DEFENDER DOCUMENTATION PROJECT *****
+
+*** Scanning Module (defender/Modules/Scan) interface documentation ***
+
+This should provide everything needed to write new modules for defender.  If
+something is missing please let Thunderhacker know.
+
+NOTICE:  Not all of these are supported in all link modules.  Because the lead
+developer uses inspircd on his network the inspircd11 link module will be the
+first module to support new interface subroutines.
+
+Please see the existing modules for help on formatting.  If you need
+additional assistance please stop by #defender on irc.chatspike.net or leave a
+message on the forums at http://ircdefender.org/qsf/
+
+Subroutines listed in alphabetical order for no other reason than the person
+writing this documentation feels a bit OCD right now :)  Actual order in the
+module doesn't matter, but take a look at the existing modules to try to
+keep things somewhat standardized.
+
+Remember: "And LARRY said, all thy modules shalt end with 1, and it was so."
+
+
+sub handle_join
+	my ($nick,$chan) = @_;
+
+	Triggers when someone joins a channel
+
+	$nick is the client that joined
+	$chan is the channel joined
+
+
+sub handle_kick
+	my ($nick,$chan,$kicked,$reason) = @_;
+
+	Triggers when someone is kicked from a channel
+
+	$nick is the client that did the kicking
+	$chan is the channel the client was kicked from
+	$kicked is the client that was kicked from the channel
+	$reason is the reason given in the kick
+
+
+sub handle_mode
+	my ($nick,$target,$params) = @_;
+
+	Triggers when a mode is set
+
+	$nick is the nick that sets the mode
+	$target is who/what the mode is set on
+	$params is the mode(s) set
+
+
+sub handle_nick
+	my ($oldnick,$newnick) =@_;
+
+	Triggers when a client changes its nickname
+
+	$oldnick is the nickname is had
+	$newnick is the nickname it is now
+
+
+sub handle_notice
+	my ($nick,$ident,$host,$chan,$notice) = @_;
+
+	Triggers when defender receives a NOTICE or CTCP reply
+
+	$nick is who sent the NOTICE
+	$ident is ident of $nick
+	$host is host of $nick
+	$chan is channel the NOTICE is directed at
+	$notice is the text of the NOTICE
+
+
+sub handle_part
+	my ($nick,$chan) = @_;
+
+	Triggers when someone parts a channel normally (not kicked)
+
+	$nick is who parted
+	$chan is the channle parted
+
+
+sub handle_privmsg
+	my ($nick,$ident,$host,$chan,$msg) = @_;
+
+	Triggers when someone says something in a channel defender is in
+
+	$nick is who said something
+	$ident is the ident of $nick
+	$host is the host of $nick
+	$chan is the channel something was said in
+	$msg is what was said
+
+
+sub handle_quit
+	my ($nick,$reason) = @_;
+
+	Triggers when someone exits the server (including bans/kills)
+
+	$nick is the client exiting
+	$reason is the quit message
+
+
+sub handle_topic
+	my ($nick,$chan,$topic) = @_;
+
+	Triggers when someone changes the topic of a channel
+
+	$nick is the topic changer
+	$chan is the channel the topic was changed on
+	$topic is the new topic
+
+
+sub init
+	no parameters passed
+
+	Triggers when a module is initialized
+
+	Should check dependencies and include a provides line.  This is where
+	you should load settings from a config file if needed.
+
+
+sub scan_user
+	my ($ident,$host,$serv,$nick,$fullname,$print_always) =@_
+
+	Triggers when someone connects to a server
+
+	$ident is the ident of the client
+	$host is the host of the client
+	$serv is the server connected to
+	$nick is the nickname
+	$fullname is the realname (GECOS)
+	$print_always is for future use and should be ignored.
+
+
+sub stats
+	No parameter passed
+
+	Triggers when someone does a status request.  Should print status
+	messages to the control channel.

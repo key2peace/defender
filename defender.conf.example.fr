@@ -1,0 +1,117 @@
+#!/usr/bin/perl defender.pl
+
+# Config d'exemple de IRC Defender.
+# ---------------------------------
+#
+# lisez svp tout le dossier de config avant que vous exécutiez le programme.
+# Économiser vos config de phase classez en tant que 'defender.conf 'dans le
+# même annuaire que le manuscrit de defender.pl.
+# vous pouvez employer la construction %xx pour insérer n'importe quel 
+# caractère non-ASCII dans les config dossier, par exemple insertions
+# de %3D un littéral "=" symbole. vous ne devez pas avoir les espaces entre
+# le nom variable, = symbole, et sa valeur.
+#
+# Avertissant!
+#
+# N'ÉDITEZ PAS CE DOSSIER DES TEXTES DANS UN ORDINATEUR DE WINDOWS!
+# ÉDITEZ-LE DANS VOTRE COQUILLE OU ELLE NE LIRA PAS CORRECTEMENT 
+# ET VOUS OBTIENDREZ TOUTES SORTES ERREURS ÉTRANGES! VOUS
+# AVEZ ÉTÉ AVERTIS!
+#
+# La version anglais de ce dossier d'exemple est defender.conf.example.
+#
+# $Id: defender.conf.example.fr 1610 2005-07-07 12:21:28Z brain $
+
+#a laisser ainsi 
+paranoia=7 
+
+#le nom du service : 
+fullname=IRC Defender 
+
+#ip de votre serveur 
+server=ip... 
+
+# a laisser ainsi 
+bind=127.0.0.1 
+
+#port de votre serveur 
+port=6667 
+
+#Pseudo du service 
+botnick=Defender 
+
+#Le salon du service 
+channel=#services 
+
+#message lors de la deconnection du service 
+quitmsg=Defender terminating 
+
+#a laisser ainsi en principe (dossier) 
+datadir=/home/path/to/data/defender 
+
+#mail donné lors d'un besoin d'aide par un utilisateur 
+mail=admin@girafon 
+
+# adresse donnée lors d'un besoin d'aide par un utilisateur 
+url=http://www.chatspike.net/?page%3Dkilled 
+
+# host du service 
+domain=security.girafon.org 
+
+#nom de votre serveur 
+networkname=ChatSpike 
+
+#type du link 
+linktype=unreal 
+
+#type de link : 
+#        +-------------------------------------+--------------+ 
+#        | irc server                          | Link module  | 
+#        +-------------------------------------+--------------+ 
+#        | UnrealIRCd 3.1.1 -> 3.2             |  unreal      | 
+#        | Bahamut 1.4.x                       |  bahamut     | 
+#        | UltimateIRCd 3.x                    |  bahamut     | 
+#        | Hybrid 7.x                          |  hybrid      | 
+#        | P10 (IRCu, beware ircd, etc.)       |  p10         | 
+#        | UnrealIRCd client mode (deprecated) |  client      | 
+#        | TR-IRCD                             |  trircd      | 
+#        | ptlink                              |  ptlink6     | 
+#        +-------------------------------------+--------------+ 
+
+#motdepasse du link 
+password=mot_de_passe 
+
+#nom du serveur virtuel  (ne pas oublier de le mettre dans les ulines 
+dans votre fichier de conf de votre ircd) 
+servername=security.girafon.org 
+
+#numeric du serveur de ce service 
+numeric=200 
+
+#description 
+serverdesc=IRC Defender Server 
+
+#les modules que vous voulez lancer (jai traduit ces modules pour que 
+les messages soit en francais, si vous voulez que jupload dite moi enfin 
+spa tres compliqué a traduire :)) 
+modules=fyle,cgiirc,regexp_akill,version,conn_average 
+
+# lieu ou se trouve les log 
+logto=Text 
+logpath=/home/brain/defender/defender.log 
+
+#le nombre de connection par minute avant denvoyer une alerte 
+conn_average_max=20 
+
+#nom de votre salon daide 
+supportchannel=#chatspike 
+
+#detection du flood  (vous pouvez laisser ainsi) 
+flood_log=1 
+flood_globops=2 
+flood_lock=3 
+flood_interval=5 
+
+# le flood nick limité a 3 pseudos en une minute 
+nickflood_limit=3
+

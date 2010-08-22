@@ -1,0 +1,103 @@
+from 1.5.1 to 1.5.2:
+
+	Major changes (affects all modules and main program)
+	+ Fix potential memory leak on server connection drop (thanks WolfSage@ChatSpike)
+
+	File defender.conf.example:
+	+ Added SID configuration option for InspIRCd 1.2 link module
+
+	File Moduels/Link/p10.pm
+	+ Added topic change detection (Thanks JonathanK@ChatSpike)
+	+ Misc. fixes (thanks OUTsider@chatspike)
+
+	File main.pm
+	+ Fix bug of not writing pid file
+
+	File Modules/Scan/antipsybnc.pm
+	+ Added module (Thanks PinkFreud)
+	+ Fixed bug in gline call
+
+from 1.5 to 1.5.1:
+
+	File Modules/Link/p10.pm
+	+ Merged various fixes provided by OUTsider (thanks OUTsider@ChatSpike)
+
+From 1.5-RC2 to 1.5:
+
+	File Modules/Link/inspircd11.pm
+	+ Small modification to FJOIN matching regex to take into account single and multiple nick forms
+
+	File Modules/Link/p10.pm
+	+ Added topic change detection (Thanks JonathanK@ChatSpike)
+
+	File Modules/Link/unreal.pm
+	+ Fix for the part regex so it passes proper values to handle_part
+
+	File Modules/Main.pm
+	+ added version_verbose config option
+
+	File Modules/Scan/cgiirc.pm
+	+ Change regex to detect older versions (thanks satmd@chatspike)
+
+	File Modules/Scan/spammage.pm
+	+ Fixed uninitialized value in chomp and problems with uppercase letters in channel names
+
+	File Modules/Scan/verbose.pm
+	+ added handle_kick
+	+ Fixed a problem that dumps lots of errors to the log file
+
+	File Modules/Scan/version.pm
+	+ added version_verbose config option
+	+ Changed so verbose setting doesn't print version responses during netjoin (it floods the control channel on large networks)
+
+	File defender.conf.example
+	+ Reformatted to 80 columns
+
+
+From 1.5-RC1 to 1.5-RC2:
+
+	Added German translation of INSTALL file (thanks xomicron (Tom Felb))
+	Added German translation of README file (thanks xomicron (Tom Felb))
+	Added German translation of defender.conf.example (thanks xomicron (Tom Felb))
+	Added changelog (you're reading it!)
+
+	Added rough draft of antibear module (file Modules/Scan/antibear.pm)
+		This module is a work in progress and doesn't work properly right now.
+
+	Added verbose control channel message module (file Modules/Scan/verbose.pm)
+		This module outputs messages in the control channel for the following events:
+			Channel Joins
+			Channel Parts
+			Channel Kicks
+			Client connects
+			Client disconnects (quits)
+			Channel topic changes
+			Nickname changes
+		Loading this module also makes the version.pm module report version replies
+
+	file Modules/Link/inspircd11.pm
+	+ Fix FMODE in inspircd11 link module (thanks Wulf @ forums)
+	+ Fix oper detection to work on OPERTYPE instead of +o (thanks w00t @ Chatspike for the help)
+	+ Complete overhaul of the regex ladder (changed to if elsif chain, was matching multiple lines)
+	+ Fixed NICK regex
+	+ Added structure for handle_quit processing
+	+ Fixed typo in FJOIN related to nicks (thanks Wulf @ forums)
+	+ Added code to emulate mode +o on OPERTYPE for other modules (thanks Wulf @ forums)
+	+ Added structure and support for undocumented KICK (handle_kick)
+	+ Fixed FJOIN regex (wasn't matching lines with only one nick)
+
+	file Modules/Main.pm
+	+ Added code to parse config file values "OneWord" and "ugly"
+
+	file Modules/Scan/message.pm
+	+ Fixed problem with the nick counter (thanks Wulf @ forums)
+
+	file Modules/Scan/version.pm
+	+ Made one word version ban a configurable option
+	+ Verbose output of version reply depends on loading of verbose module
+
+	file defender.conf.example
+	+ Added new configuration options
+
+	file defender.pl
+	+ Updated version and release date (I actually remembered this time!)

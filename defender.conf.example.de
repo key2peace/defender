@@ -1,0 +1,261 @@
+#!/usr/bin/perl defender.pl
+# -----------------------------------------------------------------------------------
+#                                                                     
+#                         IRC Defender Beispiel Config                
+#                         ---------------------------                 
+# Bitte lese zuerst diese Configdatei bevor du das Programm startest.
+# Speichere deine aktuelle geänderte Configdatei als 'defender.conf' 
+# in dem gleichen Verzeichnis wo sich auch das defender.pl Skript 
+# befindet. 
+#                                                                                      
+#
+# Du kannst das Konstrukt %xx verwenden um ein Nicht-ASCII Zeichen in
+# die ConfigDatei einzufügen, Bsp: %3D fügt ein Literal "=" Symbol ein.                                                                                  #
+# Es dürfen keine Leerräume zwischen dem Variablennamen, beim = Symbol und 
+# bei dem darauffolgenden Wert sein. 
+                                                                   
+# ACHTUNG! Bearbeite diese Textdatei nicht mit einem Windowseditor! 
+# Bearbeite sie in deiner Shell da sonst diese Datei fehlerhaft
+# gelesen wird und du verschiedene Arten von seltsamen 
+# Fehlermeldungen bekommst!
+# Du wurdest gewarnt!
+#
+#                                                                                      
+# $Id: defender.conf.example 1609 2005-07-07 12:20:34Z brain $
+#                                                                                      
+# ------------------------------------------------------------------------------------ 
+
+#-----
+# Paranoia Level. Setze dies auf den maximalen erlaubten Wert. Es
+# wird *SEHR* empfohlen diesen vorgegebenen Wert von 7 zu verwenden. 
+# Es wird derzeit nur von dem Fylemodul benützt, in Zukunft 
+# vielleicht auch von anderen Modulen
+#-----
+
+paranoia=7
+
+
+# ------
+# Name des Clients (GECOS)
+# ------
+
+fullname=IRC Defender
+
+
+
+# -----
+# Name des Servers
+# -----
+
+server=localhost
+
+
+# -----
+# IP Adresse des Servers
+
+bind=127.0.0.1
+
+
+# -----
+# Port Nummer des Servers
+# -----
+
+port=6667
+
+
+# -----
+# Nickname des Client's
+# -----
+
+botnick=Defender
+
+
+# -----
+# Abgesicherter #Raumname zum Betreten des Client's
+# -----
+
+channel=#services
+
+
+# -----
+# Quit Nachricht bei SIGKILL
+# -----
+
+quitmsg=Defender terminating
+
+
+# -----
+# Data Verzeichnis, wenn nicht definiert wird das aktuelle 
+# vorgegebene Verzeichnis verwendet
+# -----
+
+datadir=/home/path/to/data/defender
+
+# -----
+# email Adresse bei /kill Meldungen
+# -----
+
+mail=admin@meinnetzwerk.net
+
+
+# -----
+# url Adresse die vom System benötigt wird , bei /kill Meldungen
+# -----
+
+url=http://www.chatspike.net/?page%3Dkilled
+
+# -----
+# Hostname für den Pseudoclient
+# -----
+
+domain=meinnetzwerk.net
+
+
+# -----
+# Netzwerkname, bei Meldungen und bei /kill Meldungen
+# -----
+
+networkname=meinnetzwerk
+
+
+# -----
+# Name des Serverprotokoll Moduls , zb. für unrealircd 'unreal'
+# -----
+
+linktype=unreal
+
+#        +-------------------------------------+--------------+ 
+#        | irc server                          | Link module  | 
+#        +-------------------------------------+--------------+ 
+#        | UnrealIRCd 3.1.1 -> 3.2             |  unreal      | 
+#        | Bahamut 1.4.x                       |  bahamut     | 
+#        | UltimateIRCd 3.x                    |  bahamut     | 
+#        | Hybrid 7.x                          |  hybrid      | 
+#        | P10 (IRCu, beware ircd, etc.)       |  p10         | 
+#        | UnrealIRCd client mode (deprecated) |  client      | 
+#        | TR-IRCD                             |  trircd      | 
+#        | ptlink                              |  ptlink6     | 
+#        +-------------------------------------+--------------+ 
+
+
+# -----
+# Server Link Passwort, oder Clientverbindungspasswort bei einer 
+# I: line
+# -----
+
+password=mein_passwort
+
+
+# -----
+# Virtueller Services Name des Defender, wenn möglich als U: Line in 
+# deiner IRCD Konfigurationsdatei setzen. 
+# Bsp: defender.deinnetzwerk.net
+# -----
+
+servername=defender.meinnetzwerk.net
+
+
+# -----
+# Server Numerik für unrealircd und p10. Siehe README!
+# -----
+
+#numeric=200
+numeric=2
+
+
+# -----
+# Server Beschreibung
+# -----
+
+serverdesc=IRC Defender Server
+
+
+# -----
+# Auth Modul Typ
+# -----
+
+authtype=basic
+
+
+# -----
+# Scanmodule die beim Start geladen werden sollen (bitte getrennt
+# durch Beistriche angeben). Siehe Modules/Scan Verzeichnis
+# -----
+
+modules=fyle,regexp_akill,version,conn_average
+
+
+# -----
+# Log Modul Name (vorgegeben ist Text, für das Logging in eine Datei)
+# -----
+
+logto=Text
+logpath=/home/brain/defender/defender.log 
+
+
+# -----
+# Parameter für das conn_average module, bei welcher Anzahl von IRC-
+# Verbindungen pro Minute soll gewarnt werden?
+# -----
+
+conn_average_max=3
+
+
+
+# -----
+# Name des Support Raums
+# -----
+
+supportchannel=#meinRaumname
+
+
+# -----
+# Parameter für das flood Modul, bei wievielen joins/parts Aktionen
+# und der Parameter des Checking Intervals.
+# -----
+
+flood_log=1
+flood_globops=2
+flood_lock=3
+flood_interval=5
+
+
+# -----
+# Parameter für das nickflood Modul, bei welcher Anzahl von
+# Nickänderungen wird ein Flood ausgelöst, und der Parameter des 
+# Checking Intervals.
+# -----
+
+nickflood_limit=3
+
+
+# ------------------------ Nicht mehr aktiv ---------------------------
+#
+# Diese Werte werden nur vom client Modul verwendet,
+# und daher als nicht mehr aktiv angesehen. Wenn du dennoch dieses Modul
+# verwenden möchtest (oder wenn nur das verfügbar ist) MUSST du diese Werte # definieren.
+#
+#       -----
+#       Name für den /oper Befehl,(wird nur vom Clientmodul
+#       verwendet)
+#       -----
+#
+#       opername=mein_opername
+#
+#       -----
+#       Passwort für den /oper Befehl,(wird nur vom Clientmodul 
+#	  verwendet)
+#       
+#       -----
+#
+#       operpass=mein_passwort
+#
+#       -----
+#       Nickserv Passwort zur Identifikation mit Nickserv,(wird nur 
+#       vom Clientmodul verwendet)
+#       
+#       -----
+#
+#       nickserv=mein_nspasswort
+#
+

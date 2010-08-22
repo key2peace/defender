@@ -1,0 +1,16 @@
+INSTALLATION INSTRUCTIONS
+-------------------------
+
+o  Untar the package contents to your directory
+   (if you have got this far chances are you've
+   done this already)
+
+o  Copy the defender.conf.example to defender.conf,
+   and edit all the values in it to suit your
+   IRC network configuration.
+
+o  Start the program with "perl defender.pl".
+   The program will background, sending output
+   to the chosen logging method you defined in the
+   config file.
+

@@ -1,0 +1,777 @@
+IRC Defender - http://ircdefender.sourceforge.net/
+==================================================
+
+Entwickelt für irc.chatspike.net und die IRC Community
+
+Lead Developer:		Brain
+Contributors:		WhiteWolf, openglx, reed and others
+Module Developers:	ol, typobox43, Azhrarn
+Website Design:		Craig
+
+Wenn Du diese Software gut findest, sende uns doch 
+eine e-mail an brain@chatspike.net sodas wir uns vorstellen können,
+wieviele Menschen IRC-Defender benützen :-)
+
+Unterstützte Software
+------------------
+
+Um dieses Programm verwenden zu können, muss deine IRCD Software in der Tabelle (siehe unten) 
+vorhanden sein. Unterstützungen für andere ircds werden vielleicht auf Anfrage in Zukunft ergänzt.
+Wir bitten daher um Hilfe um neue Lösungen entwickeln zu können.
+
+        +-------------------------------------+-------------+
+        | irc server                          | Link module |
+        +-------------------------------------+-------------+
+        | UnrealIRCd 3.1.1 -> 3.2             | unreal      |
+        | Bahamut 1.8.x                       | bahamut     |
+        | UltimateIRCd 3.x                    | ultimate    |
+        | Bahamut 1.4.x (unstable)            | ultimate    |
+        | Hybrid 7.x                          | hybrid      |
+        | P10 (IRCu, beware ircd, etc.)       | p10         |
+        | UnrealIRCd client mode (deprecated) | client      |
+        | TR-IRCD                             | trircd      |
+        | ptlink                              | ptlink6     |
+        | ircd 2.10 (RFC 2813)                | ircd210     |
+        | InspIRCd Beta 6 to 1.0.7            | inspircd10  |
+        | InspIRCd 1.1.0 Beta 2 onwards       | inspircd11  |
+        +-------------------------------------+-------------+
+
+Danke an WhiteWolf für das TR-IRCD Modul und danke an openglx für sein ptlink6 Modul,
+durch ihre harte Arbeit und deren Unterstützung für das Projekt. Auch ein großes Danke an laXity 
+von irc.bongster.de für seine Unterstützung und für den Zugang zu einem UltimateIRCd Testserver 
+der für die Entwicklung des bahamut/ultimate Moduls verwendet wurde.
+Ein großes Danke auch an beware und reed für ihre Ratschläge und Programmierung für das P10 Modul.
+(auch danke für die leichtzuverstehende Spezifikation bei diesem komplexen Protokoll!)
+
+Shared Blocks und U:Lines
+-------------------------
+
+Wenn du zu einem InspIRCd Server linken möchtest musst du eine <uline> 
+für deinen Defenderserver setzen. 
+Zum Beispiel:
+
+<uline server="defender.meinnetzwerk.net">
+
+Wenn du zu einem Hybrid Server linken möchtest, brauchst du einen
+shared {} block (Äquivalent zu einer U-Line) für deinen Server. 
+Zum Beispiel:
+
+shared { name = "defender.meinnetzwerk.net"; };
+
+Dies erlaubt dem Defenderserver globale k-lines zu setzen (welche benützt werden sobald 
+Defender einen Host bannen möchte). Deaktiviere das command rate limiting für den Defenderserver, 
+oder den "Status" Befehl (siehe unten). Um den geschwünschten Effekt zu erreichen setze ein can_flood 
+im auth {} block oder erhöhe die Grenzen.
+
+Wenn du zu einem p10-kompatiblen server (zb. ircu) linken möchtest,musst du für alle deine 
+Server u:lines setzen.
+
+Zum Beispiel:
+
+U:defender.meinnetzwerk.com:Defender:*
+
+Dies erfüllt zwei Zwecke, erstens es erlaubt dem Defender modehacks (zb. für das flood Modul etc)
+und Global kills auszuführen, zweitens funktioniert es wie eine Q:Line, die normalen Usern
+verbietet den Nicknamen 'Defender' zu benützen.
+
+Auf einem ircd2.10 Server werden glines und globops durch den IRC Defender emuliert, 
+und ein Restart des Service bewirkt, dass alle emulierten glines gelöscht werden.
+
+
+
+Die Server Numerik
+------------------
+
+Einige Servertypen verwenden eine (auch bekannt unter dem Namen) 'Server Numerik'.
+Diese sind normalerweise bei der Netzwerkadministration des Netzwerks(wo dein Server gelinkt ist)
+reserviert. Abhängig von deinem Modul das du gewählt hast musst du den folgenden Wert in deiner 
+Configdatei definieren:
+
+numeric=<deine reservierte Server Numerik>
+
+Zurzeit verwenden nur drei von vier ServerModulen der Distribution diese Numerik. 
+Die Formate sind in der folgenden Tabelle angegeben:
+
+ +-------------------+---------------------------------+---------------+
+ | Modul Typ       | Numerik Format                  |  Beispiel      |
+ +-------------------+---------------------------------+---------------+
+ | unreal            | Ganzzahl , 1..255          |    156        |
+ | p10               | zwei alphanumerische Charakter  |  QZ B5 f4 hE  |
+ | trircd            | Ganzzahl , 1..255          |    28         |
+ +-------------------+---------------------------------+---------------+
+
+
+Starten des Programms
+--------------------
+
+Siehe example Configdatei für die Details der Konfiguration.
+Starte das Programm mit "perl defender.pl"
+
+Das Programm läuft im Hintergrund und es betritt automatisch den Raum den du in deiner Configdatei
+definiert hast. Bitte sei vorsichtig das dieser Raum nur für opers sein sollte (zb. setze +O),
+dass normale Users keinen Zugang zu diesen Befehlen bekommen.
+
+
+Welche Module sollen verwendet werden
+----------------------------
+
+Das Programm ist modular aufgebaut, daher musst du deine gewünschten Module auswählen bevor 
+das Programm läuft. Es gibt zwei spezielle Modultypen, protocol und log Module. Zumindest ein Modul
+der Beiden muss IMMER geladen werden.
+
+Das Protocol Modul stellt die Schnittstelle für das IRC Netzwerk zur Verfügung und das Logging Modul
+stellt die Schnittstelle für das Schreiben der Logs (umgeleitet von stdout in eine Datei) bereit.
+
+Sobald du diese zwei Dateien(Module) in deiner Configdatei definiert hast kannst du andere Module
+auswählen, siehe zum Beispiel Configdatei. Diese Module führen Scanoperationen bei Usern 
+aus, sobald sich jene verbinden oder mit dem Service in Kontakt kommen.
+
+
+
+Rehashing/Changing Module während des Programmbetriebs
+-------------------------------------
+
+Solange das Programm läuft kannst du die Configdatei editieren und dann einen 'entfernten rehash' ausführen
+( mit /rehash defender.*) Damit werden die Konfigurationsdateien neu eingelesen. Wenn du irgendwelche
+Module aus deiner Konfiguration entfernt hast werden diese nicht mehr geladen und wenn du Module
+hinzugefügt hast werden diese geladen. Der Rest der nicht verändert wurde wird reinitialisiert.
+Wenn deine Server Software keinen 'entfernten rehash' unterstützt kannst du dies über den Bot
+Kontrolraum tun mit:
+
+botnick rehash
+
+hat denselben Effekt wie ein /rehash Befehl bei jenen Servern
+die einen 'entfernten rehash' unterstützen.
+
+
+Load Reihenfolge
+----------
+
+Wie bei den meisten modular aufgebauten Programmen, ist die Loadanordnung deiner Module wichtig.
+Jedes Modul im IRC Defender besteht aus Abhängigkeiten und Funktionen. Module können auf einer
+sicheren und stabilen Art und Weise gegenseitig voneinander abhängig sein. Es hängt von dir ab 
+welche Module du in welcher Reihenfolge laden möchtest um zb. keine Konflikte zu erzeugen oder
+Module mehrfach zu laden. Zum Beispiel wenn ein Modul A abhängig ist von einem Modul B musst du
+garantieren, dass Modul B vor dem Modul A in deiner modules= Line in deiner Configdatei definiert ist.
+In der Configdatei (modules= Line) werden die angegebenen Module von links nach rechts geladen.
+
+Anzeige der geladenen Module
+----------------------
+
+Zum Anzeigen aller geladenen Module und der Programmlaufzeit verwende einfach den Befehl:
+
+status
+
+in deinem Kontrollraum.
+
+Für einen detaillierteren Überblick tippe:
+
+status all
+
+Wenn du nur eine Information über ein bestimmtes Modul haben möchtest tippe:
+
+status [module-name]
+
+module-name ist der Name des geladenen Moduls.
+
+
+
+Inkludierte Module
+================
+
+Die folgenden Module sind in der Basisdistribution inkludiert:
+
+fyle
+----
+
+Dieses Modul scannt nach anatoly/fyle Dronen, das sind zum Beispiel Bots mit Nicks wie `|\{{]
+welche Räume mit einer großen Useranzahl betreten um Menschen zu finden und sie mit gefährlichen
+urls zu belästigen. Es wird nach Heuristik gebannt zb. virus gecos, Nick und Ident Kombinationen und
+anderem Gefährlichen. Der paranoia= Wert in der Configdatei gibt an, wie sensibel es sein soll.
+Es wird SEHR empfohlen dies auf den voreingestellten Wert von 7 zu lassen. 
+
+Unterstützte Befehle: 
+
+fyle scan [nick] [ident] [gecos]
+
+Beachte! Um dieses Modul zu benützen brauchst du die words.txt Datei
+Du kannst sie von der Projektseite http://www.sourceforge.net/projects/ircdefender/ downloaden.
+
+killchan
+--------
+
+Das killchan Modul verbietet Usern den Zugang zu bestimmten Kanälen. Um das killchan Modul zu
+benützen verwende folgende Befehle in deinem Kontrolraum:
+
+killchan add [channel] [reason]
+killchan list
+killchan del [channel]
+
+Wenn ein Nicht-Oper einen verbotenen Raum betritt, wird er temporär G-Lined(Standard für 30 Minuten).
+Wenn ein Oper einen verbotenen Raum betritt wird er nur gewarnt.
+
+TIP: Es ist eine gute Idee ein killchan auf den Defenderkontrollraum zu setzen wenn dein ircd nur
+die grundlegenden Sicherheitsfunktionen wie +i, +s and +k besitzt. Wenn ein User den Raum betritt,
+oder durch Zufall durch einen Oper eingeladen wird (oder zweckmäßig) oder ein User den Raumschlüssel
+besitzt wird er durch killchan sobald er den Raum betritt G-Lined solange die Opers noch Zugang zum
+Pseudoclient erhalten.
+
+Dies schützt auch den Raum solange IRC Defender läuft, auch wenn zum Beispiel durch services,
+GNUWorld  die Raumsicherheit in deinem Kontrollraum nicht mehr verfügbar ist aufgrund eines Dos oder
+Netsplits. Solange ein Pseudoclient verfügbar ist wird er IMMER unzugänglich für Nicht-Opers sein.
+
+
+message
+-------
+
+Dieses einfache Modul antwortet mit einer Servernotiz sobald dem Defender eine Nachricht gesendet
+wird, um fragende User auf deinen Supportkanal für Hilfe hinzuweisen.
+
+fizzer
+------
+
+Dieses Modul eliminiert fizzer Dronen. Es hat keine Konfigurationsoptionen oder Befehle.
+
+re_notice
+---------
+
+Dieses Modul erlaubt dir eine ServerNotiz mit einem regulären Muster(Ausdruck) an alle User
+deines Netzwerks zu senden. Zum Beispiel könntest du eine Nachricht an alle AOL User senden,
+oder an alle User aus Finnland, oder an alle User mit bestimmten Idents (oder an alle User die in
+ihren Idents eine Nummer haben, es gibt viele Möglichkeiten)
+
+Das Modul unterstützt einen Befehl:
+
+re_notice [regexp] [message]
+
+Der reguläre Ausdruck ist nicht automatisch verankert, bitte verwende ^ und $ zum verankern deines
+regulären Ausdrucks. (Wenn du dir bei der Syntax der regulären Ausdrücke nicht sicher bist kann dir
+google weiterhelfen)
+
+nickflood
+---------
+
+Dieses Modul erkennt Nickfloods. Du musst einen Wert in deiner Configdatei setzen zb.
+
+nickflood_limit=5
+
+Dies /KILL alle User die mehr als 5 Nickwechsel in 5 Sekunden ausführen.
+Wenn ein User geKILLt wurde wird eine Nachricht an deinen Kontrollraum gesendet.
+
+flood
+-----
+
+Dieses Modul verhindert große Botnet Floods in deinen Räumen deines Netzwerks.
+Es stellt eine Ebene des Schutzes zur Verfügung den ein Raum nicht zufällig deaktivieren kann.
+(es kann irgendeine Sperre aufheben die durch chanserv modelocks gesetzt wurden)
+Dieses Modul besteht aus drei Werte und einem Interval. Sie können wie folgend gesetzt werden:
+
+flood_log=5
+flood_globops=10
+flood_lock=15
+flood_interval=5
+
+Der erste Wert legt fest wieviele joins und parts pro Kanal stattfinden.
+Wenn ein Raum soviele joins und parts hat wird es im "home" Raum des Defender geloggt.
+
+Zum Bespiel:
+
+<Defender> Channel #test has had 6 joins/parts in the past 5 seconds, 10 triggers oper alert.
+
+Der zweite Wert legt fest, dass sobald dieser Grenzwert erreichet ist eine GLOBOPS Nachricht gesendet wird.
+
+Der dritte Wert (wenn dieser erreicht wird) bewirkt das der Raum mit den Raummodes +miCKc gesperrt
+wird zum Schutz vor weiteren Floods. Er wird nach 1 Minute wieder aufgehoben.
+
+Der vierte Wert ist das 'Interval', zum Beispiel wenn dies auf 5 gesetzt wird funktionieren
+alle (Zeit)Zähler bei X Joins/5 Sekunden.
+
+secureoper
+----------
+
+Dieses Modul beobachtet /oper Ereignisse. Es läuft nur wenn der defender mit einem Serverprotokoll
+läuft und nicht wenn der Defender selbst ein Oper Client ist. Der Server muß auf deinem Netzwerk
+auch als U:Line gesetzt sein sodas er Clients auch deopern kann. Du musst eine Liste mit Nicknamen
+(mit regulären Ausdrücken) in der opernicks.conf Datei (im Config Verzeichnis) definieren,
+getrennt durch newlines. Zum Beispiel, \[Brain\] Beachte die Sonderzeichen [ and \!).
+Jeder User der sich opern möchte wird überprüft. Steht dieser Nickname nicht in der Configdatei,
+wird er vom Service deopert.
+
+Dies stellt eine zusätzliche Sicherheit zur Verfügung gegen:
+
+o User die für sich selber versuchen o:lines zu setzen (z.b bei Probelinks)
+
+o Admins die versuchen lokalen operstatus für ihre Freunde zu setzen
+
+o Eingrenzung von boxes wo o:lines durch Eindringlinge gesetzt werden.
+
+etc etc...
+
+Du magst vielleicht denken das diese Situationen durch dein Auswahlverfahren (der opers)
+nicht mehr passieren, aber warum dieses Risiko eingehen? :-)
+
+cgiirc
+------
+
+Diese Modul blockt cgi:irc User die versuchen Zugang zu deinem Netzwerk über eine unauthorisierte
+Seite zu bekommen.
+
+Seit der Version 1.4.0 unterstützt dieses Modul eine Liste von authorisierten CGI:IRC Seiten.
+Jede wird durch einen regulären Ausdruck dargestellt die den Hostnamen der Seiten entsprechen.
+
+Bearbeite die cgiirc.conf Datei und setze eine Liste von regulären Ausdrücken (eine pro Zeile) ein, 
+die den Hostnamen entsprechen denen es erlaubt ist CGI:IRC zu benützen.
+
+Seit Version v1.3.6 setzt dieses Modul eine zeitlich begrenzte (10 Minuten) G-Line wenn
+ein cgi:irc Client entdeckt wird, um zu verhindern, dass der Server nicht zu belastet und der
+Kontollraum nicht zugespammt wird.
+
+regexp_akill
+------------
+
+Dieses Modul erlaubt dir mit regulären Ausdrücken akills auf User zu setzen, auf den 
+Nicknamen, den Ident, Host und gecos. Bitte sehe dir die Beispiele der Moduldatei an.
+
+Unterstützte Befehle: regexp_akill add [hostmask] [reason]
+                      regexp_akill del [hostmask]
+                      regexp_akill list
+
+Seit Version v.1.3.6 setzt dieses Modul eine zeitlich begrenzte (10 Minuten) G-Line sobald 
+ein gebannter Nickname, Hostname oder GECOS entdeckt wird, um zu verhindern, dass der Server
+nicht zu belastet und der Kontrollraum nicht zugespammt wird.
+
+version
+-------
+
+Dieses Modul erfüllt zwei Zwecke. Erstens es verwaltet eine schwarze Liste von Versionen
+um schwarzgelistete Clientversionen zu stoppen, die versuchen sich zu deinem Netzwerk zu verbinden.
+Du kannst dir in deinem Datenverzeichnis eine durch tabs getrennte Datei anlegen.
+ 
+Folgendes Beispielformat :
+
+regexp	G	ban-reason
+regexp2	G	ban-reason2
+regexp3 	W	warning-1
+
+Das erste Feld ist ein regulärer Ausdruck. Wenn dieser reguläre Ausdruck der Version eines Clients
+entspricht (zb."mirc.+6\..+") wird ein Befehl ausgeführt. Der Befehl wird durch das zweite Feld
+dargestellt. Dies ist entweder ein G oder ein W. 
+
+Wenn du in diesem Feld ein G einstellst, setzt das Modul eine G-Line auf den User.
+Der dritte Parameter ist der Grund für den Bann.
+
+Wenn du in diesem Feld ein W einstellst warnt das Modul den User via PRIVMSG.
+Der dritte Parameter ist der Text der Warnmeldung.
+
+
+Beispiele für die Konfiguration:
+---------------
+
+Bottler.+ G	XDCC Looker Bots sind nicht erlaubt!
+mIRC.+5\.+Bey W   Du verwendest eine unsichere mIRC Version bitte upgraden 
+
+mIRC.+3\.+ W	Warum verwendest du eine 10 Jahre alte mIRC Version?
+
+eggdrop.+ G     Keine Bots!
+x-chat\s2\.0\.5 W Du verwendest eine unsichere x-chat Version bitte upgraden
+
+Dieses Modul unterstützt auch ein einfache Überprüfung von Clientversionen du kannst die Anzahl
+der User bestimmen die zb. mIRC, x-chat oder irssi verwenden.
+
+Seit Version v1.3.6 setzt dieses Modul eine zeitlich begrenzte G-Line ( 10 Minuten ) wenn
+eine gebannte Version entdeckt wird, um zu verhindern, dass der Server nicht zu belastet
+und der Kontrollraum nicht zugespammt wird.
+
+conn_average
+------------
+
+Dieses Modul überwacht die Anzahl der Clientverbindungen pro Minute
+auf allen Servern. Wird diese Anzahl, die der Administrator definiert hat überschritten
+wird eine Warnung via GLOBOPS gesendet. Du musst folgenden Wert in deine defender.conf hinzufügen:
+
+conn_average_max=100
+
+Dieser Wert von 100 zeigt an, dass wenn die Anzahl der Clientverbindungen des ganzen Netzwerks
+pro Minute über 100 ist, sollte eine GLOBOPS Nachricht gesendet werden.
+
+spammage
+--------
+
+Das Spammage Modul ist neu in Version 1.4.x. Es kann wiederholende Zeilen in einem Raum entdecken
+egal ob diese Zeilen von seperaten Clients oder nur von einem Client kommen. Einmal ausgelöst,
+werden alle Clients die diese Zeile wiederholen für 10 Minuten G-lined.
+
+Weil das ressourceintensiv ist muss ein Raum mit dem 'monitor' Befehl 
+im Kontrollraum des Defender genau angegeben werden.
+
+Folgende Befehle sind gültig:
+
+spammage monitor [#channel] [threshold] [reason]
+spammage unmonitor [#channel]
+
+Wenn ein Raum überwacht wird, muss sich eine Zeile [threshold] wiederholen bevor der Schutz aktiviert
+wird. Wenn dieser Schutz einmal aktiviert ist und ein User diese Zeile als PRIVMSG oder NOTICE
+wiederholt wird er mit dem gegebenen Grund glined.
+Jeder User der eine andere Zeile tippt setzt den Spam Zähler auf Null.
+Beachte das dieses Modul vorallem effektiv gegen bestimmte Typen von Spambots wirksam ist,
+aber empfindlich gegen andere Typen.
+
+Verwende dieses Modul bei einem auffälligen Verhalten (z.b wenn alle Bots die gleiche Phrase
+verwenden).
+
+
+
+		+---------------------------------------------+
+		| Teile dieser Software sind von Potbot     |
+		| (a simple perl bot: http://potbot.lv6.net/) |
+		+---------------------------------------------+
+
+Kontakt:
+
+Wenn du möchtest kann du die Authoren dieser Software im #Defender Raum auf irc.chatspike.net
+kontaktieren, oder auf der sourceforge Projektseite http://ircdefender.sourceforge.net/
+
+-------------------------------------------------------------------------------
+
+
+		    GNU GENERAL PUBLIC LICENSE
+		       Version 2, June 1991
+
+ Copyright (C) 1989, 1991 Free Software Foundation, Inc.
+                       59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+			    Preamble
+
+  The licenses for most software are designed to take away your
+freedom to share and change it.  By contrast, the GNU General Public
+License is intended to guarantee your freedom to share and change free
+software--to make sure the software is free for all its users.  This
+General Public License applies to most of the Free Software
+Foundation's software and to any other program whose authors commit to
+using it.  (Some other Free Software Foundation software is covered by
+the GNU Library General Public License instead.)  You can apply it to
+your programs, too.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+this service if you wish), that you receive source code or can get it
+if you want it, that you can change the software or use pieces of it
+in new free programs; and that you know you can do these things.
+
+  To protect your rights, we need to make restrictions that forbid
+anyone to deny you these rights or to ask you to surrender the rights.
+These restrictions translate to certain responsibilities for you if you
+distribute copies of the software, or if you modify it.
+
+  For example, if you distribute copies of such a program, whether
+gratis or for a fee, you must give the recipients all the rights that
+you have.  You must make sure that they, too, receive or can get the
+source code.  And you must show them these terms so they know their
+rights.
+
+  We protect your rights with two steps: (1) copyright the software, and
+(2) offer you this license which gives you legal permission to copy,
+distribute and/or modify the software.
+
+  Also, for each author's protection and ours, we want to make certain
+that everyone understands that there is no warranty for this free
+software.  If the software is modified by someone else and passed on, we
+want its recipients to know that what they have is not the original, so
+that any problems introduced by others will not reflect on the original
+authors' reputations.
+
+  Finally, any free program is threatened constantly by software
+patents.  We wish to avoid the danger that redistributors of a free
+program will individually obtain patent licenses, in effect making the
+program proprietary.  To prevent this, we have made it clear that any
+patent must be licensed for everyone's free use or not licensed at all.
+
+  The precise terms and conditions for copying, distribution and
+modification follow.
+
+		    GNU GENERAL PUBLIC LICENSE
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. This License applies to any program or other work which contains
+a notice placed by the copyright holder saying it may be distributed
+under the terms of this General Public License.  The "Program", below,
+refers to any such program or work, and a "work based on the Program"
+means either the Program or any derivative work under copyright law:
+that is to say, a work containing the Program or a portion of it,
+either verbatim or with modifications and/or translated into another
+language.  (Hereinafter, translation is included without limitation in
+the term "modification".)  Each licensee is addressed as "you".
+
+Activities other than copying, distribution and modification are not
+covered by this License; they are outside its scope.  The act of
+running the Program is not restricted, and the output from the Program
+is covered only if its contents constitute a work based on the
+Program (independent of having been made by running the Program).
+Whether that is true depends on what the Program does.
+
+  1. You may copy and distribute verbatim copies of the Program's
+source code as you receive it, in any medium, provided that you
+conspicuously and appropriately publish on each copy an appropriate
+copyright notice and disclaimer of warranty; keep intact all the
+notices that refer to this License and to the absence of any warranty;
+and give any other recipients of the Program a copy of this License
+along with the Program.
+
+You may charge a fee for the physical act of transferring a copy, and
+you may at your option offer warranty protection in exchange for a fee.
+
+  2. You may modify your copy or copies of the Program or any portion
+of it, thus forming a work based on the Program, and copy and
+distribute such modifications or work under the terms of Section 1
+above, provided that you also meet all of these conditions:
+
+    a) You must cause the modified files to carry prominent notices
+    stating that you changed the files and the date of any change.
+
+    b) You must cause any work that you distribute or publish, that in
+    whole or in part contains or is derived from the Program or any
+    part thereof, to be licensed as a whole at no charge to all third
+    parties under the terms of this License.
+
+    c) If the modified program normally reads commands interactively
+    when run, you must cause it, when started running for such
+    interactive use in the most ordinary way, to print or display an
+    announcement including an appropriate copyright notice and a
+    notice that there is no warranty (or else, saying that you provide
+    a warranty) and that users may redistribute the program under
+    these conditions, and telling the user how to view a copy of this
+    License.  (Exception: if the Program itself is interactive but
+    does not normally print such an announcement, your work based on
+    the Program is not required to print an announcement.)
+
+These requirements apply to the modified work as a whole.  If
+identifiable sections of that work are not derived from the Program,
+and can be reasonably considered independent and separate works in
+themselves, then this License, and its terms, do not apply to those
+sections when you distribute them as separate works.  But when you
+distribute the same sections as part of a whole which is a work based
+on the Program, the distribution of the whole must be on the terms of
+this License, whose permissions for other licensees extend to the
+entire whole, and thus to each and every part regardless of who wrote it.
+
+Thus, it is not the intent of this section to claim rights or contest
+your rights to work written entirely by you; rather, the intent is to
+exercise the right to control the distribution of derivative or
+collective works based on the Program.
+
+In addition, mere aggregation of another work not based on the Program
+with the Program (or with a work based on the Program) on a volume of
+a storage or distribution medium does not bring the other work under
+the scope of this License.
+
+  3. You may copy and distribute the Program (or a work based on it,
+under Section 2) in object code or executable form under the terms of
+Sections 1 and 2 above provided that you also do one of the following:
+
+    a) Accompany it with the complete corresponding machine-readable
+    source code, which must be distributed under the terms of Sections
+    1 and 2 above on a medium customarily used for software interchange; or,
+
+    b) Accompany it with a written offer, valid for at least three
+    years, to give any third party, for a charge no more than your
+    cost of physically performing source distribution, a complete
+    machine-readable copy of the corresponding source code, to be
+    distributed under the terms of Sections 1 and 2 above on a medium
+    customarily used for software interchange; or,
+
+    c) Accompany it with the information you received as to the offer
+    to distribute corresponding source code.  (This alternative is
+    allowed only for noncommercial distribution and only if you
+    received the program in object code or executable form with such
+    an offer, in accord with Subsection b above.)
+
+The source code for a work means the preferred form of the work for
+making modifications to it.  For an executable work, complete source
+code means all the source code for all modules it contains, plus any
+associated interface definition files, plus the scripts used to
+control compilation and installation of the executable.  However, as a
+special exception, the source code distributed need not include
+anything that is normally distributed (in either source or binary
+form) with the major components (compiler, kernel, and so on) of the
+operating system on which the executable runs, unless that component
+itself accompanies the executable.
+
+If distribution of executable or object code is made by offering
+access to copy from a designated place, then offering equivalent
+access to copy the source code from the same place counts as
+distribution of the source code, even though third parties are not
+compelled to copy the source along with the object code.
+
+  4. You may not copy, modify, sublicense, or distribute the Program
+except as expressly provided under this License.  Any attempt
+otherwise to copy, modify, sublicense or distribute the Program is
+void, and will automatically terminate your rights under this License.
+However, parties who have received copies, or rights, from you under
+this License will not have their licenses terminated so long as such
+parties remain in full compliance.
+
+  5. You are not required to accept this License, since you have not
+signed it.  However, nothing else grants you permission to modify or
+distribute the Program or its derivative works.  These actions are
+prohibited by law if you do not accept this License.  Therefore, by
+modifying or distributing the Program (or any work based on the
+Program), you indicate your acceptance of this License to do so, and
+all its terms and conditions for copying, distributing or modifying
+the Program or works based on it.
+
+  6. Each time you redistribute the Program (or any work based on the
+Program), the recipient automatically receives a license from the
+original licensor to copy, distribute or modify the Program subject to
+these terms and conditions.  You may not impose any further
+restrictions on the recipients' exercise of the rights granted herein.
+You are not responsible for enforcing compliance by third parties to
+this License.
+
+  7. If, as a consequence of a court judgment or allegation of patent
+infringement or for any other reason (not limited to patent issues),
+conditions are imposed on you (whether by court order, agreement or
+otherwise) that contradict the conditions of this License, they do not
+excuse you from the conditions of this License.  If you cannot
+distribute so as to satisfy simultaneously your obligations under this
+License and any other pertinent obligations, then as a consequence you
+may not distribute the Program at all.  For example, if a patent
+license would not permit royalty-free redistribution of the Program by
+all those who receive copies directly or indirectly through you, then
+the only way you could satisfy both it and this License would be to
+refrain entirely from distribution of the Program.
+
+If any portion of this section is held invalid or unenforceable under
+any particular circumstance, the balance of the section is intended to
+apply and the section as a whole is intended to apply in other
+circumstances.
+
+It is not the purpose of this section to induce you to infringe any
+patents or other property right claims or to contest validity of any
+such claims; this section has the sole purpose of protecting the
+integrity of the free software distribution system, which is
+implemented by public license practices.  Many people have made
+generous contributions to the wide range of software distributed
+through that system in reliance on consistent application of that
+system; it is up to the author/donor to decide if he or she is willing
+to distribute software through any other system and a licensee cannot
+impose that choice.
+
+This section is intended to make thoroughly clear what is believed to
+be a consequence of the rest of this License.
+
+  8. If the distribution and/or use of the Program is restricted in
+certain countries either by patents or by copyrighted interfaces, the
+original copyright holder who places the Program under this License
+may add an explicit geographical distribution limitation excluding
+those countries, so that distribution is permitted only in or among
+countries not thus excluded.  In such case, this License incorporates
+the limitation as if written in the body of this License.
+
+  9. The Free Software Foundation may publish revised and/or new versions
+of the General Public License from time to time.  Such new versions will
+be similar in spirit to the present version, but may differ in detail to
+address new problems or concerns.
+
+Each version is given a distinguishing version number.  If the Program
+specifies a version number of this License which applies to it and "any
+later version", you have the option of following the terms and conditions
+either of that version or of any later version published by the Free
+Software Foundation.  If the Program does not specify a version number of
+this License, you may choose any version ever published by the Free Software
+Foundation.
+
+  10. If you wish to incorporate parts of the Program into other free
+programs whose distribution conditions are different, write to the author
+to ask for permission.  For software which is copyrighted by the Free
+Software Foundation, write to the Free Software Foundation; we sometimes
+make exceptions for this.  Our decision will be guided by the two goals
+of preserving the free status of all derivatives of our free software and
+of promoting the sharing and reuse of software generally.
+
+			    NO WARRANTY
+
+  11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
+TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
+PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+REPAIR OR CORRECTION.
+
+  12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
+OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
+TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
+YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
+PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+		     END OF TERMS AND CONDITIONS
+
+	    How to Apply These Terms to Your New Programs
+
+  If you develop a new program, and you want it to be of the greatest
+possible use to the public, the best way to achieve this is to make it
+free software which everyone can redistribute and change under these terms.
+
+  To do so, attach the following notices to the program.  It is safest
+to attach them to the start of each source file to most effectively
+convey the exclusion of warranty; and each file should have at least
+the "copyright" line and a pointer to where the full notice is found.
+
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) <year>  <name of author>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Also add information on how to contact you by electronic and paper mail.
+
+If the program is interactive, make it output a short notice like this
+when it starts in an interactive mode:
+
+    Gnomovision version 69, Copyright (C) year name of author
+    Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details.
+
+The hypothetical commands `show w' and `show c' should show the appropriate
+parts of the General Public License.  Of course, the commands you use may
+be called something other than `show w' and `show c'; they could even be
+mouse-clicks or menu items--whatever suits your program.
+
+You should also get your employer (if you work as a programmer) or your
+school, if any, to sign a "copyright disclaimer" for the program, if
+necessary.  Here is a sample; alter the names:
+
+  Yoyodyne, Inc., hereby disclaims all copyright interest in the program
+  `Gnomovision' (which makes passes at compilers) written by James Hacker.
+
+  <signature of Ty Coon>, 1 April 1989
+  Ty Coon, President of Vice
+
+This General Public License does not permit incorporating your program into
+proprietary programs.  If your program is a subroutine library, you may
+consider it more useful to permit linking proprietary applications with the
+library.  If this is what you want to do, use the GNU Library General
+Public License instead of this License.
+
