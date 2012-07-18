@@ -2,3 +2,4 @@ data
 defender.conf
 defender.log
 defender.pid
+checkdefender

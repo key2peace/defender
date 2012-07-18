@@ -20,7 +20,7 @@ sub noticehandler {
 		$sHost = $3;
 	}
 
-	if ($target eq $botnick) { # *FIXME* Mysterious globals like $botnick should be in all caps or something
+	if (lc($target) eq lc($botnick)) {
 		$target = $sNick; # Don't want to talk to myself
 	}
 

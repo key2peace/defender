@@ -1,0 +1,108 @@
+##############################################################################
+#               DroneBL / dnsbl module for IRC Defender                      #
+#         written by Alexander Maassen <outsider@scarynet.org>               #
+##############################################################################
+
+INSTALLATION:
+
+	open defender.conf and add the following line:
+		dronebl_rpckey=<your rpc key here>
+
+	If you do not have a dronebl rpc key yet then obtain one on irc at:
+		irc://irc.staticbox.net/dronebl
+
+REQUIREMENTS:
+
+	In order to make things work the module will need additional PERL
+	modules which you can either install using CPAN or your favourite
+	package manager.
+	The following modules are required in order for the module to work:
+	Socket, Config::General(::Extended), Tie::IxHash and HTTP::Request
+	Socket:
+		is needed in order to convert host into ip and perform the
+		dns lookups against the various dnsbl systems
+	Config::General(::Extended):
+		is needed in order to read and parse the config file.
+	Tie::IxHash:
+		also needed for configuration readment and ensuring that the
+		order in which the dnsbl servers are configured is respected
+		because of eventual reporting to dronebl.
+	Request:
+		used in order to make the rpc call towards dronebl until they
+		have a new method to send reports.
+
+OPERATION:
+
+	The module works as following, in order to reduce impact on system
+	performance on startup, the module starts to work AFTER the servers
+	have acknowledged netbursts.
+	Upon connect the module will first check at dronebl in order to see
+	if a user is known there or not, should the user not be listed there
+	then the check will be performed against the in the configuration
+	defined list of dnsbl servers and in case dronebl is interrested in
+	these types, also reported to dronebl in order to speed up detection
+	for the next time.
+
+THE CONFIG FILE:
+
+	The structure of the config file is very easy to read and modify.
+	Each section is named after the dnsbl server to use to check against.
+
+	After this the so called reply section follows using this format:
+	incoming digit = outgoing digit:human readable type reply
+	where incoming digit is the xx part in the reply 127.0.0.xx
+	where outgoing digit is the type as used by the dronebl system
+	the rest of this config line speaks for itself.
+	Please use type 4 as reply in case this is a type the dronebl
+	system no longer wants to receive. If in doubt, contact them and ask.
+	Don't bitch at me if your rpc key got revoked because you reported
+	types they don't want in their list.
+
+	reason is the part that comes AFTER the human readable type and could
+	provide an url to a page where people can get more information
+	about their IP's listing, put $ip where you want the ip of the user.
+
+	duration is the gline duration in seconds and needs to be defined.
+
+	report is an optional config option that enables dronebl reporting
+	for replies coming from that dnsbl server, and again, make sure
+	you mask away unwanted replies as type 4 in replies or your rpc key
+	*WILL* get revoked, and again, ask them about if they want replies
+	from that dns server or not.
+
+SYSTEM IMPACT:
+
+	since irc defender does not run in a threaded mode and parses stuff
+	one by one delays of the operation of defender might occur depending
+	on your networks connection rates, the speed of your dns resolving
+	etc. On small networks you should not have any issues with this 
+	system. Tested it myself on an old P3-866 with 512Mb ram and a heavy
+	load and still it captured the creeps fast enough. Should you want
+	to improve perfomance, then I suggest to start a mirror for the
+	several dnsbl servers in order to speed up dnsbl lookups. You will
+	both improve performance on your side and the rest of the world
+	taking advantage of dnsbl systems.
+
+DISCLAIMERS:
+
+	this module only provides a method of supporting dnsbl mechanisms to
+	the irc defender system. The author is in no way part of the
+	development team of either dronebl/defender at the moment of this
+	writing. Also the author is not responsible for any impact the use
+	of this module might have on your network/systems, use this module
+	at your own risk. Although the author has tested this module as
+	thorough as possible he cannot make any claims about it working
+	on every system/configuration on this planet.
+
+LICENSE:
+
+	this module is open source and available to the masses. there is no
+	specific license attached to it. In case you make modifications to
+	it that would improve the code or its speed, the author would like
+	a copy of the patch in order to make it available to the other users
+	of this module. Should you base any code on this module, then please
+	be so kind to at least put some credits.
+
+COPYRIGHTS:
+
+	all mentioned trademarks are owned by their respectfull owners.

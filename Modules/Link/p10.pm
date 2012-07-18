@@ -121,7 +121,9 @@ sub gline
 	if (main::depends("exempt") && Modules::Scan::exempt::hasexempt($hostname)) {
 		&message("\002[EXEMPT]\002 Rejected gline() for $hostname for $reason");
         } else {
-		&rawirc("$servnumeric GL * +$hostname $duration :$reason");
+		my $now = time;
+		my $expire = $duration + $now;
+		&rawirc("$servnumeric GL * +$hostname $expire $now $duration :$reason");
 		$KILLED++;
 	}
 }
@@ -129,8 +131,7 @@ sub gline
 sub gethost
 {
 	my ($nick) = @_;
-	$nick = lc($nick);
-	return $hosts{$nick}{host};
+	return $hosts{lc($nick)}{host};
 }
 
 sub getmatching
@@ -270,7 +271,6 @@ sub poll {
 		# MJ N Alpha 3 1079579461 ~hal adsl-63-f45-230-226.dsl.snfc21.pacbell.net Afxebi MJAAx :HAL9000: An IRC Bot Odyssey
 		# AB N ``{]{{{]\ 1 1079232536 foo 195.20.109.181 DDFG21 ABAAF :foo.org
 		elsif ($buffer =~ /^.+?\sN\s(.+?)\s\d+\s\d+\s(.+?)\s(.+?)\s(.+?)\s(.+?)\s(.+?)\s:(.+?)$/)
-		if ($buffer =~ /^.+?\sN\s(.+?)\s\d+\s\d+\s(.+?)\s(.+?)\s(.+?)\s(.+?)\s(.+?)\s:(.+?)$/)
 		{
 			my @regarray = split(/ /,$buffer);
 			my $index = 0;

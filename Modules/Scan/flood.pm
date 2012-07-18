@@ -12,6 +12,7 @@ my $nextinterval = time+3;
 my $threshold1 = 12;
 my $threshold2 = 20;
 my $threshold3 = 25;
+my $floodmodes = "D";
 my $locked = 0;
 my $warned = 0;
 my $logged = 0;
@@ -50,7 +51,7 @@ sub handle_expire
 	{
 		if ((time > $locktime[0]) && (defined($locktime[0])) && ($locktime[0] ne ''))
 		{
-			main::mode($lockchans[0],"-iCKmc");
+			main::mode($lockchans[0],"-".$floodmodes);
 			main::message("\002" . $lockchans[0] . "\002 was unlocked (flood lock time expired)");
 			my $crap1 = shift @lockchans;
 			my $crap2 = shift @locktime;
@@ -113,8 +114,8 @@ sub generic_handler
 	if ($chans{$channel} > $threshold3)
 	{
 		if (!islocked($channel)) {
-			main::mode($channel,"+CKmic");
-			main::notice($channel,"Your channel has been joined/parted\002 " . $chans{$channel} . "\002 times in the last\002 $interval\002 seconds which constitutes a \002flood\002. As a countermasure the modes \002+CKmic\002 have been set to prevent more flooding. Please remove these commands when the situation has averted. These modes will be automatically reversed in\002 1\002 minute.");
+			main::mode($channel,"+".$floodmodes);
+			main::notice($channel,"Your channel has been joined/parted\002 " . $chans{$channel} . "\002 times in the last\002 $interval\002 seconds which constitutes a \002flood\002. As a countermasure the modes \002+".$floodmodes."\002 have been set to prevent more flooding. Please remove these commands when the situation has averted. These modes will be automatically reversed in\002 1\002 minute.");
 			main::globops("ALERT! \002$channel\002 has been joined/parted " . $chans{$channel} . " times in the last $interval seconds and has been temporarily locked!");
 			$chans{$channel} = 0;
 			push @locktime, time+60;
@@ -196,6 +197,7 @@ sub init {
 	$threshold1 = $main::dataValues{'flood_log'};
 	$threshold2 = $main::dataValues{'flood_globops'};
 	$threshold3 = $main::dataValues{'flood_lock'};
+	$floodmodes = $main::dataValues{'flood_mode'};
 	$interval = $main::dataValues{'flood_interval'};
 	&handle_expire;
 }
