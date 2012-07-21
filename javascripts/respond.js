@@ -777,3 +777,39 @@ document.execCommand("BackgroundImageCache",false,true);
 catch(e){
 }
 
+function addFormEvent(func) {
+	if (!document.getElementById | !document.getElementsByTagName)
+		return;
+
+	var oldonload=window.onload;
+	if (typeof window.onload != 'function') {
+		window.onload=func;
+	} else {
+		window.onload=function() {
+			oldonload();
+			func();
+		}
+	}
+}
+
+function externalLinks() {
+	if (!document.getElementsByTagName)
+		return;
+	var tags = document.getElementsByTagName("a");
+	for (var i=0; i<tags.length; i++) {
+		if (tags[i].getAttribute("rel")) {
+			if (tags[i].getAttribute("rel") == "external") {
+				tags[i].target = "_blank";
+			}
+		}
+	}
+	var tags = document.getElementsByTagName("form");
+	for (var i=0; i<tags.length; i++) {
+		if (tags[i].id.substr(0,8) == "external") {
+			tags[i].target = "_blank";
+		}
+	}
+}
+
+addFormEvent(externalLinks);
+
