@@ -1,15 +1,7 @@
 ##############################################################################
-#               DroneBL / dnsbl module for IRC Defender                      #
+#                    dnsbl module for IRC Defender                           #
 #         written by Alexander Maassen <outsider@scarynet.org>               #
 ##############################################################################
-
-INSTALLATION:
-
-	open defender.conf and add the following line:
-		dronebl_rpckey=<your rpc key here>
-
-	If you do not have a dronebl rpc key yet then obtain one on irc at:
-		irc://irc.staticbox.net/dronebl
 
 REQUIREMENTS:
 
@@ -17,31 +9,24 @@ REQUIREMENTS:
 	modules which you can either install using CPAN or your favourite
 	package manager.
 	The following modules are required in order for the module to work:
-	Socket, Config::General(::Extended), Tie::IxHash and HTTP::Request
+	Socket, Config::General(::Extended) and Tie::IxHash
 	Socket:
 		is needed in order to convert host into ip and perform the
 		dns lookups against the various dnsbl systems
 	Config::General(::Extended):
 		is needed in order to read and parse the config file.
+		included in this distribution.
 	Tie::IxHash:
 		also needed for configuration readment and ensuring that the
-		order in which the dnsbl servers are configured is respected
-		because of eventual reporting to dronebl.
-	Request:
-		used in order to make the rpc call towards dronebl until they
-		have a new method to send reports.
+		order in which the dnsbl servers are configured is respected.
 
 OPERATION:
 
 	The module works as following, in order to reduce impact on system
 	performance on startup, the module starts to work AFTER the servers
 	have acknowledged netbursts.
-	Upon connect the module will first check at dronebl in order to see
-	if a user is known there or not, should the user not be listed there
-	then the check will be performed against the in the configuration
-	defined list of dnsbl servers and in case dronebl is interrested in
-	these types, also reported to dronebl in order to speed up detection
-	for the next time.
+	Upon connect the module will check at the defined dnsbls in order to see
+	if a user is known there or not.
 
 THE CONFIG FILE:
 
@@ -49,26 +34,14 @@ THE CONFIG FILE:
 	Each section is named after the dnsbl server to use to check against.
 
 	After this the so called reply section follows using this format:
-	incoming digit = outgoing digit:human readable type reply
+	incoming digit = human readable type reply
 	where incoming digit is the xx part in the reply 127.0.0.xx
-	where outgoing digit is the type as used by the dronebl system
-	the rest of this config line speaks for itself.
-	Please use type 4 as reply in case this is a type the dronebl
-	system no longer wants to receive. If in doubt, contact them and ask.
-	Don't bitch at me if your rpc key got revoked because you reported
-	types they don't want in their list.
 
 	reason is the part that comes AFTER the human readable type and could
 	provide an url to a page where people can get more information
 	about their IP's listing, put $ip where you want the ip of the user.
 
 	duration is the gline duration in seconds and needs to be defined.
-
-	report is an optional config option that enables dronebl reporting
-	for replies coming from that dnsbl server, and again, make sure
-	you mask away unwanted replies as type 4 in replies or your rpc key
-	*WILL* get revoked, and again, ask them about if they want replies
-	from that dns server or not.
 
 SYSTEM IMPACT:
 
@@ -86,9 +59,8 @@ SYSTEM IMPACT:
 DISCLAIMERS:
 
 	this module only provides a method of supporting dnsbl mechanisms to
-	the irc defender system. The author is in no way part of the
-	development team of either dronebl/defender at the moment of this
-	writing. Also the author is not responsible for any impact the use
+	the irc defender system.
+	The author is not responsible for any impact the use
 	of this module might have on your network/systems, use this module
 	at your own risk. Although the author has tested this module as
 	thorough as possible he cannot make any claims about it working
