@@ -11,7 +11,7 @@ sub noticehandler {
 	my $raw = shift;
 
 	$raw =~ /^:(.+?)\sNOTICE\s(.+?)\s:(.+?)$/xi or print "Bad input to noticehandler: $raw\n";
-	
+
 	my ($sNick, $sIdent, $sHost, $target, $message) = ($1, '', '', $2, $3);
 
 	if($sNick =~ /^([^!]+)!([^@]+)\@(\S+)/) {
@@ -29,7 +29,7 @@ sub noticehandler {
 	$sIdent = quotemeta($sIdent);
 	$sHost = quotemeta($sHost);
 	$target = quotemeta($target);
-	
+
 	foreach my $mod (@modlist) {
 		my $func = ("Modules::Scan::" . $mod . "::handle_notice(\"$sNick\",\"$sIdent\",\"$sHost\",\"$target\",\"$message\")");
 		eval $func;
@@ -59,6 +59,8 @@ sub msghandler {
 	my $sMessage = quotemeta($message);
 	$sNick = grep (/^uuidnick$/, @provides) ? $uuidnick{quotemeta($sNick)} :
 	         quotemeta($sNick);
+	$sIdent = quotemeta($sIdent);
+	$sHost = quotemeta($sHost);
 	$target = quotemeta($target);
 
 	foreach my $mod (@modlist) {
@@ -66,7 +68,7 @@ sub msghandler {
 		eval $func;
 		print $@ if $@;
 	}
-	
+
 	# Added hook for handling privmsg authcmds subset.
 	#my $func = ("main::auth_handle_privmsg(\"$sNick\",\"$target\",\"$sMessage\")");
 	#eval $func;
@@ -137,7 +139,7 @@ sub msghandler {
                                 my $hours = ($delta/(60*60))%24;
                                 my $mins = ($delta/60)%60;
                                 my $secs = $delta%60;
-                                                                                                                          
+
                                 undef $uptime;
                                 if ($weeks){$uptime .= $weeks =~ /^1$/ ? "$weeks week, " : "$weeks weeks, ";}
                                 if ($days){$uptime .= $days =~ /^1$/ ? "$days day, " : "$days days, ";}
@@ -146,10 +148,10 @@ sub msghandler {
                                 $uptime .= $secs =~ /^[01]$/ ? "$secs sec" : "$secs secs";
 
 				message("Uptime: \002$uptime\002.");
-				
+
 				my $modlist = join(", ",@modlist).', '.lc($CONNECT_TYPE);
 				message("Loaded modules: \002$modlist\002");
-				
+
 				$features = join(", ",@provides);
 				message("Features provided: \002$features\002");
 			} else {
@@ -159,7 +161,7 @@ sub msghandler {
 				message(" ");
 				message("Using \002$CONNECT_TYPE\002 protocol module.");
 				message(" ");
-				
+
 				foreach my $mod (@modlist) {
 					if (($module eq "") || ($mod =~ /^\Q$module\E$/i)) {
 						message("Module: \002$mod\002");
@@ -170,7 +172,7 @@ sub msghandler {
 						message(" ");
 					}
 				}
-				
+
 				my $modtotal = $#modlist+1;
 				message("Total of \002$modtotal\002 modules loaded.");
 			}

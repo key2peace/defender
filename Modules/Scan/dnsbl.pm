@@ -47,7 +47,7 @@ sub scan_user
 {
 	my($ident, $host, $serv, $nick, $fullname, $print_always) = @_;
 	return if ($main::NETJOIN == 1);
-	$droneblconnects++;
+	$dnsblconnects++;
 	my $ipaddr = gethostbyname($host);
 	if(defined $ipaddr) {
 		my $ip = inet_ntoa($ipaddr);
@@ -65,7 +65,7 @@ sub scan_user
 					$reason =~ s/\$ip/$ip/;
 					main::message("User $nick!$ident\@$host ($ip) matches on $dnsbl ($desc)!");
 					main::gline("*\@$ip",$dnsbls{$dnsbl}{'duration'},"$desc $reason");
-					$droneblkilled++;
+					$dnsblkilled++;
 					return;
 				}
 			}
