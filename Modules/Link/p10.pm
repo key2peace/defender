@@ -123,7 +123,7 @@ sub gline
         } else {
 		my $now = time;
 		my $expire = $duration + $now;
-		&rawirc("$servnumeric GL * +$hostname $expire $now $duration :$reason");
+		&rawirc("$servnumeric GL * +$hostname $expire $now 0 :$reason");
 		$KILLED++;
 	}
 }
