@@ -3,3 +3,4 @@ defender.conf
 defender.log
 defender.pid
 checkdefender
+dnsbl.conf
