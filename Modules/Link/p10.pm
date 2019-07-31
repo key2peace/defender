@@ -375,7 +375,7 @@ sub poll {
 					my $func = ("Modules::Scan::".$mod."::scan_user\(\"".
 						   (defined $theident?$theident:"")."\",\"".
 						   (defined $thehost?$thehost:"")."\",\"".
-						   (defined $theserver?theserver:"")."\",\"".
+						   (defined $theserver?$theserver:"")."\",\"".
 						   (defined $thenick?$thenick:"")."\",\"".
 						   (defined $thegecos?$thegecos:"")."\",0\)");
 					eval $func;
