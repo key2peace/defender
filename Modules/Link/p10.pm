@@ -122,7 +122,7 @@ sub gline
 		&message("\002[EXEMPT]\002 Rejected gline() for $hostname for $reason");
         } else {
 		my $now = time;
-		my $expire = $duration + $now;
+		my $expire = $duration + $now + 20;
 		&rawirc("$servnumeric GL * +$hostname $expire $now 0 :$reason");
 		$KILLED++;
 	}

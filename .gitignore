@@ -4,3 +4,4 @@ defender.log
 defender.pid
 checkdefender
 dnsbl.conf
+regexp_akill.conf

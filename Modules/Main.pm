@@ -180,7 +180,7 @@ sub reinit_modules
 	foreach $mod (@added) {
 		print ("Loading: Modules/Scan/$mod.pm... ");
 		push @rehash_data, "Loading: Modules/Scan/$mod.pm... ";
-		require "Modules/Scan/$mod.pm";
+		require "$curdir/Modules/Scan/$mod.pm";
 		my $func = "Modules::Scan::" . $mod . "::init";
 		eval $func;
 		print $@ if $@;
@@ -201,9 +201,9 @@ sub reinit_modules
 
 sub init_modules
 {
-	open(CHECK,"Modules/Link/$linkmodule.pm") or &barf("Link",$linkmodule);
+	open(CHECK,"$curdir/Modules/Link/$linkmodule.pm") or &barf("Link",$linkmodule);
 	close(CHECK);
-	require "Modules/Link/$linkmodule.pm";
+	require "$curdir/Modules/Link/$linkmodule.pm";
 	print ("Using $linkmodule connection module (loaded OK)...\n");
 	&link_init;
 
@@ -219,17 +219,17 @@ sub init_modules
 	our @modlist = split(",",$modules);
 	foreach $mod (@modlist) {
 	        print ("Loading: Modules/Scan/$mod.pm... ");
-		open(CHECK,"Modules/Scan/$mod.pm") or &barf("Scan",$mod);
+		open(CHECK,"$curdir/Modules/Scan/$mod.pm") or &barf("Scan",$mod);
 		close(CHECK);
-	        require "Modules/Scan/$mod.pm";
+	        require "$curdir/Modules/Scan/$mod.pm";
 		my $func = "Modules::Scan::" . $mod . "::init";
 	        eval $func;
 		print ("OK!\n");
 	}
 
-	open(CHECK,"Modules/Log/$logger.pm") or &barf("Log",$logger);
+	open(CHECK,"$curdir/Modules/Log/$logger.pm") or &barf("Log",$logger);
 	close(CHECK);
-	require "Modules/Log/$logger.pm";
+	require "$curdir/Modules/Log/$logger.pm";
 	if (!$debug)
 	{
 		print "Switching to $logger logging method from now\n";
